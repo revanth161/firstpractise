@@ -3,6 +3,11 @@
 pipeline {
   agent none
   stages {
+    stage('Initialize'){
+        def dockerHome = tool 'myDocker'
+        env.PATH = "${dockerHome}/bin:${env.PATH}"
+    }
+
     stage('Maven Install') {
       agent {
         docker {
@@ -13,15 +18,13 @@ pipeline {
         sh 'mvn clean install'
       }
     }
+    
     stage('Docker Build') {
       agent any
       steps {
         sh 'docker build -t shanem/spring-petclinic:latest .'
       }
     }
-    stage('Initialize') {  
-       def dockerHome = tool 'myDocker'
-       env.PATH = "${dockerHome}/bin:${env.PATH}"
-    }
-  } 
-}
+  }	
+} 
+
